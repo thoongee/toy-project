@@ -1,5 +1,6 @@
 import { Notebook } from "@phosphor-icons/react/dist/ssr";
 
+import { DeleteCardButton } from "@/components/delete-card-button";
 import { PaperCard } from "@/components/paper-card";
 import {
   Empty,
@@ -30,7 +31,7 @@ export function NoteList({ cards }: { cards: NoteCard[] }) {
   return (
     <div className="flex flex-col gap-4">
       {cards.map((card) => (
-        <PaperCard key={card.paperId} card={card} />
+        <PaperCard key={card.paperId} card={card} action={<DeleteCardButton card={card} />} />
       ))}
     </div>
   );

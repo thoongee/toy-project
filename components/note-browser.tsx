@@ -27,12 +27,16 @@ export function NoteBrowser({ cards }: { cards: NoteCard[] }) {
   const [question, setQuestion] = useState(ALL);
 
   const questions = useMemo(() => questionsInNote(cards), [cards]);
+
+  // 고른 질문의 카드를 모두 지우면 그 질문도 노트에서 사라지므로 전체 질문으로 되돌린다.
+  const selected = questions.includes(question) ? question : ALL;
+
   const visible = useMemo(
-    () => filterCards(cards, { query, question: question === ALL ? undefined : question }),
-    [cards, query, question],
+    () => filterCards(cards, { query, question: selected === ALL ? undefined : selected }),
+    [cards, query, selected],
   );
 
-  const filtering = query.trim().length > 0 || question !== ALL;
+  const filtering = query.trim().length > 0 || selected !== ALL;
 
   return (
     <div className="flex flex-col gap-5">
@@ -53,7 +57,7 @@ export function NoteBrowser({ cards }: { cards: NoteCard[] }) {
 
         <Field className="sm:w-64">
           <FieldLabel htmlFor="note-question">어떤 질문에서</FieldLabel>
-          <Select value={question} onValueChange={(value) => setQuestion(value ?? ALL)}>
+          <Select value={selected} onValueChange={(value) => setQuestion(value ?? ALL)}>
             <SelectTrigger id="note-question">
               <SelectValue>
                 {(value: string) => (value === ALL ? "전체 질문" : shorten(value))}

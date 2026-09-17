@@ -50,3 +50,9 @@ export async function appendToNote(cards: NoteCard[]): Promise<void> {
 
   if (error) throw new Error(`노트에 저장하지 못했습니다: ${error.message}`);
 }
+
+export async function removeFromNote(paperId: string): Promise<void> {
+  const { error } = await supabaseClient().from("note_cards").delete().eq("paper_id", paperId);
+
+  if (error) throw new Error(`노트에서 지우지 못했습니다: ${error.message}`);
+}

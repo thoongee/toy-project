@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { dedupePapers, searchArxiv, type ArxivPaper } from "@/lib/arxiv";
 import { curatePapers, curationModelName, planSearches, type SearchPlan } from "@/lib/curation";
 import type { NoteCard } from "@/lib/note";
-import { appendToNote } from "@/lib/note-store";
+import { appendToNote, removeFromNote } from "@/lib/note-store";
 
 export type AskState =
   | { status: "idle" }
@@ -81,6 +81,27 @@ export async function askAboutSituation(
     return {
       status: "error",
       situation,
+      message: error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.",
+    };
+  }
+}
+
+export type RemoveCardResult = { status: "done" } | { status: "error"; message: string };
+
+export async function removeNoteCard(paperId: string): Promise<RemoveCardResult> {
+  const id = paperId.trim();
+
+  if (id.length === 0) {
+    return { status: "error", message: "지울 카드를 찾지 못했습니다." };
+  }
+
+  try {
+    await removeFromNote(id);
+    revalidatePath("/note");
+    return { status: "done" };
+  } catch (error) {
+    return {
+      status: "error",
       message: error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.",
     };
   }

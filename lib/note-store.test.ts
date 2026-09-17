@@ -2,15 +2,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const order = vi.fn();
 const rpc = vi.fn();
+const eq = vi.fn();
 
 vi.mock("./supabase", () => ({
   supabaseClient: () => ({
-    from: () => ({ select: () => ({ order }) }),
+    from: () => ({ select: () => ({ order }), delete: () => ({ eq }) }),
     rpc,
   }),
 }));
 
-import { appendToNote, readNote } from "./note-store";
+import { appendToNote, readNote, removeFromNote } from "./note-store";
 import type { NoteCard } from "./note";
 
 function card(paperId: string, question: string): NoteCard {
@@ -33,7 +34,9 @@ function card(paperId: string, question: string): NoteCard {
 beforeEach(() => {
   order.mockReset();
   rpc.mockReset();
+  eq.mockReset();
   rpc.mockResolvedValue({ error: null });
+  eq.mockResolvedValue({ error: null });
 });
 
 describe("readNote", () => {
@@ -91,5 +94,19 @@ describe("appendToNote", () => {
     await expect(appendToNote([card("2401.00001", "질문")])).rejects.toThrow(
       "함수를 찾지 못했습니다",
     );
+  });
+});
+
+describe("removeFromNote", () => {
+  it("논문 하나만 골라서 지운다", async () => {
+    await removeFromNote("2401.00001");
+
+    expect(eq).toHaveBeenCalledWith("paper_id", "2401.00001");
+  });
+
+  it("지우기가 실패하면 오류를 알린다", async () => {
+    eq.mockResolvedValue({ error: { message: "권한이 없습니다" } });
+
+    await expect(removeFromNote("2401.00001")).rejects.toThrow("권한이 없습니다");
   });
 });
