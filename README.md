@@ -19,6 +19,26 @@ bun dev
 
 [http://localhost:3000](http://localhost:3000)에서 결과를 확인할 수 있습니다.
 
+## 환경 변수
+
+`.env.local`에 아래 값을 넣습니다. 배포할 때는 Vercel 프로젝트 설정의 Environment Variables에도 같은 값을 넣어야 합니다.
+
+| 이름 | 용도 |
+|---|---|
+| `ANTHROPIC_API_KEY` | 검색어 계획과 초록 선별에 쓰는 Claude 모델 호출 |
+| `SUPABASE_URL` | 노트를 저장할 Supabase 프로젝트 주소 |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key. 서버에서만 읽으므로 브라우저로 나가지 않습니다 |
+
+`service_role` 키나 secret key는 쓰지 않습니다.
+
+## 노트 저장소
+
+노트는 Supabase의 `note_cards` 테이블에 쌓입니다. Supabase 프로젝트를 만든 뒤 대시보드 SQL Editor에서 `supabase/migrations/`의 SQL을 한 번 실행하면 테이블과 권한, 정책이 함께 만들어집니다.
+
+같은 논문이 다른 질문에서 다시 나오면 카드는 하나로 두고 적용할 수 있는 부분만 이어 붙입니다. 이 병합은 `append_note_cards` 함수가 한 문장으로 처리하므로, 두 사람이 동시에 저장해도 카드가 유실되지 않습니다.
+
+아직 로그인이 없어서 주소를 아는 사람은 누구나 같은 노트를 보고 씁니다. 사용자별로 나누는 일은 `docs/follow-ups/`에 남겨두었습니다.
+
 ## 스크립트
 
 | 명령어 | 설명 |
