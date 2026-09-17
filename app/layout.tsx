@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HEads-up",
+  title: "논문탐색기",
   description: "동형암호 연구자가 지금 하려는 일에 쓸모 있는 논문을 골라 한국어 카드로 남깁니다.",
 };
 
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-foreground/10">
           <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-4">
             <Link href="/" className="font-heading text-base font-semibold">
-              HEads-up
+              논문탐색기
             </Link>
             <nav className="flex items-center gap-4 text-sm">
               <Link href="/" className="text-muted-foreground hover:text-foreground">

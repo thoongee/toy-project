@@ -1,4 +1,4 @@
-# HEads-up
+# 논문탐색기
 
 ## Definition
 
