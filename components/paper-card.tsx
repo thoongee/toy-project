@@ -29,7 +29,16 @@ function Detail({ label, children }: { label: string; children: React.ReactNode 
   );
 }
 
-export function PaperCard({ card, defaultOpen = false }: { card: NoteCard; defaultOpen?: boolean }) {
+export function PaperCard({
+  card,
+  defaultOpen = false,
+  action,
+}: {
+  card: NoteCard;
+  defaultOpen?: boolean;
+  // 카드를 쓰는 화면이 정하는 동작. 노트에서는 지우기 버튼이 들어온다.
+  action?: React.ReactNode;
+}) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
@@ -41,6 +50,7 @@ export function PaperCard({ card, defaultOpen = false }: { card: NoteCard; defau
             <Badge variant="secondary">{card.venue}</Badge>
             <span className="text-xs text-muted-foreground">{card.publishedAt}</span>
             <span className="text-xs text-muted-foreground">arXiv:{card.paperId}</span>
+            {action}
           </div>
 
           <CollapsibleTrigger

@@ -1,5 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+
+vi.mock("@/app/actions", () => ({ removeNoteCard: vi.fn() }));
 
 import { NoteList } from "@/components/note-list";
 import type { NoteCard } from "@/lib/note";
@@ -35,5 +37,15 @@ describe("NoteList", () => {
     render(<NoteList cards={[card]} />);
 
     expect(screen.getByRole("heading", { name: card.title })).toBeInTheDocument();
+  });
+
+  it("카드마다 지우기를 두고, 누르면 먼저 확인을 받는다", () => {
+    render(<NoteList cards={[card]} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "이 카드 지우기" }));
+
+    expect(screen.getByText("이 카드를 지울까요?")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "지우기" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "그대로 두기" })).toBeInTheDocument();
   });
 });

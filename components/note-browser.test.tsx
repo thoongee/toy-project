@@ -35,6 +35,20 @@ const bootstrapping = card({
   contribution: "SPRU bootstrapping으로 multiplicative depth를 줄입니다.",
 });
 
+// 질문 필터를 확인하려면 다른 질문에서 나온 카드가 있어야 한다.
+const packing = card({
+  paperId: "2606.16359v1",
+  title: "Unifying Data Packing for Efficient Private Inference",
+  applications: [
+    {
+      question: "암호문 packing 비용",
+      reason: "packing 전략을 비교합니다.",
+      application: "추론 비용을 줄이는 기준으로 쓸 수 있습니다.",
+      createdAt: "2026-09-17T02:00:00.000Z",
+    },
+  ],
+});
+
 describe("NoteBrowser", () => {
   it("검색어를 넣으면 맞는 카드만 남는다", () => {
     render(<NoteBrowser cards={[diffusion, bootstrapping]} />);
@@ -46,6 +60,18 @@ describe("NoteBrowser", () => {
 
     expect(screen.queryByRole("heading", { name: diffusion.title })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: bootstrapping.title })).toBeInTheDocument();
+  });
+
+  it("카드가 노트에서 빠지면 그 카드에만 있던 질문도 목록에서 사라진다", () => {
+    const { rerender } = render(<NoteBrowser cards={[diffusion, packing]} />);
+
+    fireEvent.click(screen.getByLabelText(/어떤 질문에서/));
+
+    expect(screen.getByRole("option", { name: "암호문 packing 비용" })).toBeInTheDocument();
+
+    rerender(<NoteBrowser cards={[diffusion]} />);
+
+    expect(screen.queryByRole("option", { name: "암호문 packing 비용" })).not.toBeInTheDocument();
   });
 
   it("검색 결과가 없으면 노트가 빈 것과 다르게 알린다", () => {
